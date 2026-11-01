@@ -1,0 +1,23 @@
+{
+  "name": "riskcovery-open",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Riskcovery's marmot core and the runner that reviews a website's security with it on your own machine",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/starcovery/riskcovery-open.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "review": "node src/review.ts"
+  },
+  "dependencies": {
+    "dotenv": "18.0.9",
+    "effect": "4.0.6",
+    "testcontainers": "12.2.1"
+  }
+}

@@ -1,0 +1,101 @@
+{
+	admin off
+	auto_https off
+}
+
+:80 {
+	log {
+		output file /data/access.log
+		format json
+	}
+
+	header {
+		Server "Apache/2.4.49 (Unix)"
+		X-Powered-By "PHP/7.2.34"
+		Set-Cookie "PHPSESSID=5e0c1f7a9d2b4c68e1a3; path=/"
+	}
+
+	handle /.git/HEAD {
+		header Content-Type "text/plain; charset=utf-8"
+		respond <<END_HEAD
+			ref: refs/heads/main
+			END_HEAD 200
+	}
+
+	handle /.git/config {
+		header Content-Type "text/plain; charset=utf-8"
+		respond <<END_CONFIG
+			[core]
+				repositoryformatversion = 0
+				filemode = true
+				bare = false
+			[remote "origin"]
+				url = https://deploy:larkspur-deploy-2019@git.larkspur-outdoor.test/shop.git
+				fetch = +refs/heads/*:refs/remotes/origin/*
+			[branch "main"]
+				remote = origin
+				merge = refs/heads/main
+			END_CONFIG 200
+	}
+
+	handle /.env {
+		header Content-Type "text/plain; charset=utf-8"
+		respond <<END_ENV
+			APP_ENV=production
+			DB_HOST=db.larkspur-outdoor.test
+			DB_USER=larkspur
+			DB_PASSWORD=summer-2019-larkspur
+			MAIL_PASSWORD=larkspur-mail-2019
+			PAYMENT_API_KEY=larkspur-payments-0000-test
+			END_ENV 200
+	}
+
+	handle /js/app.js {
+		header Content-Type "application/javascript; charset=utf-8"
+		respond <<END_APP_JS
+			window.larkspur = {
+				api: '/api/orders',
+				adminUser: 'admin',
+				adminPassword: 'larkspur2019',
+				mapsKey: 'larkspur-maps-public-0000',
+			};
+			jQuery(function () {
+				jQuery('.year').text(new Date().getFullYear());
+			});
+			END_APP_JS 200
+	}
+
+	handle /js/jquery-1.8.3.min.js {
+		header Content-Type "application/javascript; charset=utf-8"
+		respond <<END_JQUERY
+			;/*! jQuery v1.8.3 jquery.com | jquery.org/license */
+			(function (e) { e.jQuery = e.$ = function (f) { if (typeof f === 'function') { f(); } return { text: function () {} }; }; e.jQuery.fn = { jquery: '1.8.3' }; })(window);
+			END_JQUERY 200
+	}
+
+	handle /api/orders {
+		header Content-Type "application/json"
+		header Access-Control-Allow-Origin "*"
+		header Access-Control-Allow-Credentials "true"
+		respond <<END_JSON
+			{"orders":[{"id":1041,"customer":"Dana Whitfield","email":"dana.whitfield@example.com","total":"184.20","address":"12 Alder Lane, Bend OR"},{"id":1042,"customer":"Marco Ibarra","email":"m.ibarra@example.net","total":"62.95","address":"88 Pine St, Eugene OR"}]}
+			END_JSON 200
+	}
+
+	handle /phpinfo.php {
+		header Content-Type "text/html; charset=utf-8"
+		root * /srv
+		rewrite * /phpinfo.html
+		file_server
+	}
+
+	handle /backup/* {
+		root * /srv
+		file_server browse
+	}
+
+	handle {
+		root * /srv
+		file_server
+	}
+}
