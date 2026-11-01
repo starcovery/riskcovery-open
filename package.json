@@ -13,11 +13,15 @@
     "node": ">=24"
   },
   "scripts": {
-    "review": "node src/review.ts"
+    "review": "node src/review.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "dotenv": "18.0.9",
     "effect": "4.0.6",
     "testcontainers": "12.2.1"
+  },
+  "devDependencies": {
+    "vitest": "5.0.5"
   }
 }
